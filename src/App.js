@@ -10,7 +10,7 @@ import EditMovie from "./pages/EditMovie";
 import AdminRoute from "./components/AdminRoute";
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("title");       // NEW
 
   return (

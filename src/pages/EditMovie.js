@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import api from "../api/axios";
@@ -18,21 +18,17 @@ export default function EditMovie() {
     director: "",
     actors: "",
     rating: "",
-    poster: null, // for file input
+    poster: null,
   });
 
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (id) fetchMovie();
-  }, [id]);
-
-  const fetchMovie = async () => {
+  // ✅ fetchMovie wrapped in useCallback
+  const fetchMovie = useCallback(async () => {
     try {
       const res = await api.get(`/movies/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       const data = res.data;
 
       setMovie({
@@ -51,7 +47,12 @@ export default function EditMovie() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [id, token]);
+
+  // ✅ useEffect calls fetchMovie after it's defined
+  useEffect(() => {
+    if (id) fetchMovie();
+  }, [id, fetchMovie]);
 
   const handleChange = (e) => {
     if (e.target.type === "file") {
@@ -91,87 +92,16 @@ export default function EditMovie() {
       </Typography>
 
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <TextField
-          label="Title"
-          name="title"
-          value={movie.title}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
+        <TextField label="Title" name="title" value={movie.title} onChange={handleChange} fullWidth margin="normal" />
+        <TextField label="Description" name="description" value={movie.description} onChange={handleChange} fullWidth margin="normal" />
+        <TextField label="Released" name="released" type="date" value={movie.released} onChange={handleChange} fullWidth margin="normal" InputLabelProps={{ shrink: true }} />
+        <TextField label="Runtime" name="runtime" value={movie.runtime} onChange={handleChange} fullWidth margin="normal" />
+        <TextField label="Genre" name="genre" value={movie.genre} onChange={handleChange} fullWidth margin="normal" />
+        <TextField label="Director" name="director" value={movie.director} onChange={handleChange} fullWidth margin="normal" />
+        <TextField label="Actors" name="actors" value={movie.actors} onChange={handleChange} fullWidth margin="normal" />
+        <TextField label="Rating" name="rating" value={movie.rating} onChange={handleChange} fullWidth margin="normal" />
 
-        <TextField
-          label="Description"
-          name="description"
-          value={movie.description}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-
-        <TextField
-          label="Released"
-          name="released"
-          type="date"
-          value={movie.released}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ shrink: true }}
-        />
-
-        <TextField
-          label="Runtime"
-          name="runtime"
-          value={movie.runtime}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-
-        <TextField
-          label="Genre"
-          name="genre"
-          value={movie.genre}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-
-        <TextField
-          label="Director"
-          name="director"
-          value={movie.director}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-
-        <TextField
-          label="Actors"
-          name="actors"
-          value={movie.actors}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-
-        <TextField
-          label="Rating"
-          name="rating"
-          value={movie.rating}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
-
-        <input
-          type="file"
-          name="poster"
-          accept="image/*"
-          onChange={handleChange}
-          style={{ marginTop: "16px" }}
-        />
+        <input type="file" name="poster" accept="image/*" onChange={handleChange} style={{ marginTop: "16px" }} />
 
         <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
           Update Movie

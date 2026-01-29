@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../auth/authContext";
 
 export default function Navbar({ onSearch }) {
-  const { token, user, logout } = useContext(AuthContext);
+  const {  user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
